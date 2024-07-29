@@ -1,0 +1,37 @@
+using System;
+
+namespace Quiz4
+{
+    public class OrderDate
+    {
+        // Property to store the order date
+        public DateTime Date { get; private set; }
+
+        // Constructor to initialize the order date with a random date and time
+        public OrderDate()
+        {
+            Date = GenerateRandomDate();
+        }
+
+        // Method to generate a random date and time
+        private DateTime GenerateRandomDate()
+        {
+            Random rand = new Random();
+            int year = rand.Next(2000, 2024);
+            int hour = rand.Next(24);
+            int minute = rand.Next(60);
+            int second = rand.Next(60);
+
+            int dayOfYear = rand.Next(1, DateTime.IsLeapYear(year) ? 367 : 366);
+
+            DateTime randomDate = new DateTime(year, 1, 1).AddDays(dayOfYear - 1);
+            return new DateTime(year, randomDate.Month, randomDate.Day, hour, minute, second);
+        }
+
+        // Override the ToString method to return the date in the desired format
+        public override string ToString()
+        {
+            return Date.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+    }
+}
