@@ -1,0 +1,40 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+// With oop principles implement this class
+//
+namespace Quiz4
+{
+    //შეკვეთის თარიღი(დღე/თვე/წელი საათი:წუთი:წამი).
+    public class OrderDate
+    {
+        public DateTime Date { get; set; }
+
+        public OrderDate()
+        {
+            Random rand = new Random();
+            int year = rand.Next(2000, 2024);
+            int hour = rand.Next(24);
+            int minute = rand.Next(60);
+            int second = rand.Next(60);
+
+            bool isLeapYear = DateTime.IsLeapYear(year);
+            int dayOfYear;
+            if (isLeapYear)
+                dayOfYear = rand.Next(1, 367);
+                
+            else
+                dayOfYear = rand.Next(1, 366);
+
+            DateTime date = new DateTime(year, 1, 1).AddDays(dayOfYear - 1);
+            Date = new DateTime(year, date.Month, date.Day, hour, minute, second);
+        }
+
+        public override string ToString()
+        {
+            return Date.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+    }
+}
