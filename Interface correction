@@ -1,0 +1,14 @@
+
+    public interface IProduct
+    {
+        void AddProduct(Product product);
+        void UpdateProduct(Product product);
+        void SellProduct(Product product);
+
+        void IncreaseLimit(Product product);
+        void DecreaseLimit(Product product);
+        void GetPacketInfo(Guid id);
+
+
+
+es shevcvaleee
