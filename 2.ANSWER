@@ -1,0 +1,322 @@
+// Read the contents of Program.cs
+string programCsPath = "/mnt/data/Program.cs";
+string programCsContent = System.IO.File.ReadAllText(programCsPath);
+Console.WriteLine(programCsContent);
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Final_GvantsaTsulaia
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+        }
+    }
+}
+
+
+
+
+
+
+
+
+public interface IProduct
+{
+    string Name { get; }
+    decimal Price { get; }
+}
+
+public abstract class Product : IProduct, IComparable<Product>
+{
+    public string Name { get; private set; }
+    public decimal Price { get; private set; }
+
+    protected Product(string name, decimal price)
+    {
+        Name = name;
+        Price = price;
+    }
+
+    public int CompareTo(Product other)
+    {
+        return Price.CompareTo(other.Price);
+    }
+}
+
+public class SilverProduct : Product
+{
+    public SilverProduct(decimal price) : base("Silver", price) { }
+}
+
+public class GoldProduct : Product
+{
+    public GoldProduct(decimal price) : base("Gold", price) { }
+}
+
+public class PlatinumProduct : Product
+{
+    public PlatinumProduct(decimal price) : base("Platinum", price) { }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class Client
+{
+    public string Name { get; private set; }
+    public int Age { get; private set; }
+    public List<Product> Products { get; private set; }
+    public List<Insurance> Insurances { get; private set; }
+
+    public Client(string name, int age)
+    {
+        Name = name;
+        Age = age;
+        Products = new List<Product>();
+        Insurances = new List<Insurance>();
+    }
+
+    public void AddProduct(Product product)
+    {
+        Products.Add(product);
+    }
+
+    public void AddInsurance(Insurance insurance)
+    {
+        Insurances.Add(insurance);
+    }
+}
+
+public class Insurance
+{
+    public string Type { get; private set; }
+    public decimal InsuranceLimit { get; private set; }
+
+    public Insurance(string type, decimal insuranceLimit)
+    {
+        Type = type;
+        InsuranceLimit = insuranceLimit;
+    }
+}
+
+public class ClientComparerByAgeDescending : IComparer<Client>
+{
+    public int Compare(Client x, Client y)
+    {
+        return y.Age.CompareTo(x.Age);
+    }
+}
+
+public class InsuranceComparerByLimitAscending : IComparer<Insurance>
+{
+    public int Compare(Insurance x, Insurance y)
+    {
+        return x.InsuranceLimit.CompareTo(y.InsuranceLimit);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public static class ClientInfo
+{
+    public static List<Client> Clients { get; private set; } = new List<Client>();
+
+    public static void AddClient(Client client)
+    {
+        Clients.Add(client);
+    }
+
+    public static List<Client> GetTopClientsByInsuranceLimit(int topCount)
+    {
+        return Clients.OrderByDescending(c => c.Insurances.Sum(i => i.InsuranceLimit))
+                      .Take(topCount)
+                      .ToList();
+    }
+
+    public static Dictionary<string, decimal> GetYearlyReport(int year)
+    {
+        var report = new Dictionary<string, decimal>();
+
+        foreach (var client in Clients)
+        {
+            foreach (var product in client.Products)
+            {
+                if (report.ContainsKey(product.Name))
+                {
+                    report[product.Name] += product.Price;
+                }
+                else
+                {
+                    report[product.Name] = product.Price;
+                }
+            }
+        }
+
+        return report;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Final_GvantsaTsulaia
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var client1 = new Client("Alice", 30);
+            client1.AddProduct(new SilverProduct(20000));
+            client1.AddProduct(new GoldProduct(50000));
+            client1.AddInsurance(new Insurance("Health", 100000));
+            client1.AddInsurance(new Insurance("Life", 200000));
+
+            var client2 = new Client("Bob", 25);
+            client2.AddProduct(new SilverProduct(10000));
+            client2.AddProduct(new PlatinumProduct(35000));
+            client2.AddInsurance(new Insurance("Health", 150000));
+
+            ClientInfo.AddClient(client1);
+            ClientInfo.AddClient(client2);
+
+            var topClients = ClientInfo.GetTopClientsByInsuranceLimit(1);
+            Console.WriteLine("Top Clients by Insurance Limit:");
+            foreach (var client in topClients)
+            {
+                Console.WriteLine($"{client.Name}, Insurance Limit: {client.Insurances.Sum(i => i.InsuranceLimit)}");
+            }
+
+            var yearlyReport = ClientInfo.GetYearlyReport(2019);
+            Console.WriteLine("Yearly Report for 2019:");
+            foreach (var report in yearlyReport)
+            {
+                Console.WriteLine($"{report.Key}: {report.Value}");
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+<ItemGroup>
+  <Compile Include="ProductClasses.cs" />
+  <Compile Include="ClientInsuranceClasses.cs" />
+  <Compile Include="ClientInfoStaticClass.cs" />
+</ItemGroup>
+
+
+
+
+
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="ProductClasses.cs" />
+    <Compile Include="ClientInsuranceClasses.cs" />
+    <Compile Include="ClientInfoStaticClass.cs" />
+  </ItemGroup>
+</Project>
+
+
+
+
+
+
+
+
+
+
+
+// Path to the .csproj file
+string csprojPath = "/mnt/data/Final_GvantsaTsulaia.csproj";
+
+// Updated content for the .csproj file
+string csprojUpdatedContent = @"
+<Project Sdk=""Microsoft.NET.Sdk"">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include=""Program.cs"" />
+    <Compile Include=""ProductClasses.cs"" />
+    <Compile Include=""ClientInsuranceClasses.cs"" />
+    <Compile Include=""ClientInfoStaticClass.cs"" />
+  </ItemGroup>
+</Project>
+";
+
+// Write the updated content to the .csproj file
+System.IO.File.WriteAllText(csprojPath, csprojUpdatedContent);
+
+
+
+
+
+dotnet build
+dotnet run
+
+
+
+
