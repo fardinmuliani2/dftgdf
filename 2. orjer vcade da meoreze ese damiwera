@@ -1,0 +1,234 @@
+//Interfaces and Classes
+IProduct Interface//
+public interface IProduct
+{
+    string Name { get; }
+    decimal Price { get; }
+}
+
+
+//Product Class//
+
+public class Product : IProduct, IComparable<Product>
+{
+    public string Name { get; private set; }
+    public decimal Price { get; private set; }
+
+    public Product(string name, decimal price)
+    {
+        Name = name;
+        Price = price;
+    }
+
+    public int CompareTo(Product other)
+    {
+        return Price.CompareTo(other.Price);
+    }
+}
+
+
+
+
+
+//Client Class//
+
+
+public class Client
+{
+    public string Name { get; private set; }
+    public int Age { get; private set; }
+    public List<Product> Products { get; private set; }
+    public List<Insurance> Insurances { get; private set; }
+
+    public Client(string name, int age)
+    {
+        Name = name;
+        Age = age;
+        Products = new List<Product>();
+        Insurances = new List<Insurance>();
+    }
+
+    public void AddProduct(Product product)
+    {
+        Products.Add(product);
+    }
+
+    public void AddInsurance(Insurance insurance)
+    {
+        Insurances.Add(insurance);
+    }
+}
+
+
+
+//Insurance Class//
+
+
+
+public class Insurance
+{
+    public string Type { get; private set; }
+    public decimal Limit { get; private set; }
+
+    public Insurance(string type, decimal limit)
+    {
+        Type = type;
+        Limit = limit;
+    }
+}
+
+
+
+//ClientComparer Class//
+
+
+
+
+
+public class ClientComparer : IComparer<Client>
+{
+    public int Compare(Client x, Client y)
+    {
+        return y.Age.CompareTo(x.Age); // Descending order
+    }
+}
+
+
+
+
+//InsuranceComparer Class//
+
+
+public class InsuranceComparer : IComparer<Insurance>
+{
+    public int Compare(Insurance x, Insurance y)
+    {
+        return x.Limit.CompareTo(y.Limit); // Ascending order
+    }
+}
+
+
+
+//Static Class for Client Collection//
+
+
+public static class ClientInfo
+{
+    private static List<Client> clients = new List<Client>();
+
+    public static void AddClient(Client client)
+    {
+        clients.Add(client);
+    }
+
+    public static List<Client> GetClients()
+    {
+        return clients;
+    }
+
+    public static void SortClientsByAgeDescending()
+    {
+        clients.Sort(new ClientComparer());
+    }
+
+    public static void SortInsurancesByLimitAscending()
+    {
+        foreach (var client in clients)
+        {
+            client.Insurances.Sort(new InsuranceComparer());
+        }
+    }
+
+    public static void PrintTopClientsByInsuranceLimits(int m)
+    {
+        var topClients = clients.OrderByDescending(c => c.Insurances.Sum(i => i.Limit)).Take(m);
+        foreach (var client in topClients)
+        {
+            Console.WriteLine($"Client: {client.Name}, Total Insurance Limit: {client.Insurances.Sum(i => i.Limit)}");
+        }
+    }
+
+    public static Dictionary<string, decimal> YearlyReport(int year, List<Product> products)
+    {
+        // Assuming products have a DateSold property
+        var report = new Dictionary<string, decimal>();
+
+        foreach (var product in products.Where(p => p.DateSold.Year == year))
+        {
+            if (!report.ContainsKey(product.Name))
+            {
+                report[product.Name] = 0;
+            }
+            report[product.Name] += product.Price;
+        }
+
+        return report;
+    }
+}
+
+
+
+//Main Program //
+
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Create clients
+        var client1 = new Client("Alice", 30);
+        var client2 = new Client("Bob", 45);
+
+        // Add products to clients
+        client1.AddProduct(new Product("Silver", 20000));
+        client1.AddProduct(new Product("Gold", 50000));
+        client2.AddProduct(new Product("Platinum", 35000));
+
+        // Add insurances to clients
+        client1.AddInsurance(new Insurance("Health", 100000));
+        client2.AddInsurance(new Insurance("Car", 50000));
+
+        // Add clients to ClientInfo
+        ClientInfo.AddClient(client1);
+        ClientInfo.AddClient(client2);
+
+        // Sort and print clients by age descending
+        ClientInfo.SortClientsByAgeDescending();
+        foreach (var client in ClientInfo.GetClients())
+        {
+            Console.WriteLine($"Client: {client.Name}, Age: {client.Age}");
+        }
+
+        // Sort insurances by limit ascending
+        ClientInfo.SortInsurancesByLimitAscending();
+
+        // Print top m clients by insurance limits
+        ClientInfo.PrintTopClientsByInsuranceLimits(1);
+
+        // Yearly report
+        var products = new List<Product>
+        {
+            new Product("Silver", 20000) { DateSold = new DateTime(2019, 1, 1) },
+            new Product("Gold", 50000) { DateSold = new DateTime(2019, 2, 1) },
+            new Product("Platinum", 35000) { DateSold = new DateTime(2019, 3, 1) }
+        };
+        var report = ClientInfo.YearlyReport(2019, products);
+        foreach (var item in report)
+        {
+            Console.WriteLine($"{item.Key}: {item.Value}");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
