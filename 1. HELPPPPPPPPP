@@ -1,0 +1,15 @@
+jer es dauwere and mere chemi sheqmnil kods chagigdeb da yvela gaushviii
+            //we need to create relations between clases association or composition.
+            //    One Client may have several products and so on
+use OOP principles, and describe and explain ex. where and why did you use encapsulation, polymorphism and inheritance
+
+//Create Static class responsible for ClientInfo Client collection 
+
+Implement for Products IProduct and IComparable
+and for Client and Insurance implement IComparer-must be different classes
+
+in programs add objectss and sort Clients by ae descending and sort  Insurance ascending by InsuranceLimits
+// we need to print Top m (m<n, n is how many InsuredClients We have)  - Top m must be clients with most InsuranceLimits
+
+write method, which count yearly report based on Sold Products Sum.
+ex. if we give method properties 2019, it needs to return that in 2019 was sold 20000 silver, sold 50000 gold, sold 35000 platinum
